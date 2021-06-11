@@ -16,7 +16,7 @@ public abstract class FileHandling extends Object{
             if (!Command.checkFile(file, true)) {
                 Scanner scanner = new Scanner(file);
                 while ((str != null) && (scanner.hasNextLine())) {
-                    str = app.communicate(in, out, scanner, true);
+                    str = app.communicate(in, out, scanner, true, false);
                     if (equalsPart(str, "exit")) {
                         exit = true;
                         break;

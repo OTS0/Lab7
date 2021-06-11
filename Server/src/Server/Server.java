@@ -6,6 +6,9 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -22,6 +25,7 @@ public class Server extends Object {
         System.out.println("Сервер запущен");
         SocketChannel channel = null;
         try {
+
             ServerSocketChannel server = ServerSocketChannel.open();
             server.bind(new InetSocketAddress(serverPort));
             server.configureBlocking(false);
@@ -45,7 +49,7 @@ public class Server extends Object {
             ObjectOutputStream out = new ObjectOutputStream(Channels.newOutputStream(channel));
             ObjectInputStream in = new ObjectInputStream(Channels.newInputStream(channel));
             while (server.isOpen()) {
-                app.start(in, out);
+                app.start(in, out);.
             }
             in.close();
             out.close();

@@ -385,7 +385,7 @@ public abstract class Command extends Object {
             Scanner scanner = new Scanner(file);
             while (!equals(str, "exit")&&(scanner.hasNextLine())){
                 str = scanner.nextLine();
-                App.command(str, scanner, false);
+              //  App.command(str, scanner, false);
             }
             check = true;
             System.out.println("The script was executed.");

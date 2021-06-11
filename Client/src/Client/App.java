@@ -32,15 +32,9 @@ public class App extends Object{
     public void start(ObjectInputStream in, ObjectOutputStream out) throws IOException, NoSuchElementException,ClassNotFoundException,SocketException, ClassNotFoundException {
         try {
             System.out.println("Hello!");
-            try{
-                parser.read(System.getenv("Laba6"), in, out);
-            }
-            catch (NullPointerException e){
-                System.out.println("Enter command");
-            }
             Scanner console = new Scanner(System.in);
             while (!equalsPart(str, "exit")) {
-                str = communicate(in, out, console, true);
+                str = communicate(in, out, console, true, true);
             }
         } catch (CollectionException e) {
             System.out.println("CollectionException");
@@ -51,12 +45,28 @@ public class App extends Object{
         }
     }
 
-    public String communicate(ObjectInputStream in, ObjectOutputStream out, Scanner scanner, Boolean fromFile) throws IOException, ClassNotFoundException, CollectionException, SocketException {
+    public String communicate(ObjectInputStream in, ObjectOutputStream out, Scanner scanner, Boolean fromFile, Boolean first) throws IOException, ClassNotFoundException, CollectionException, SocketException {
 
         if (!fromFile){
             System.out.println("Please, enter a new command");
         }
-        str = scanner.nextLine();
+        if (first) {
+            System.out.println("If you want to have access " +
+                    "to change the collection you need to log in or register, enter \"log in\" or \"register\", otherwise write \"skip\" ");
+            str = scanner.nextLine();
+            if (equalsPart(str, "log in")) {
+                Account.login(scanner);
+            }
+            if (equalsPart(str, "register")) {
+                Account.register(scanner);
+            }
+            //здесь я думала отправлять объект на сервер с аккаунтом,
+            // с целью проверки -вдруг есь такой уж пользователь(с таким логином)
+            // если такого пользователя не, то создать пользователя
+
+        }
+            System.out.println("Enter command");
+
         Request request = getRequest(str, scanner, fromFile);
         if (request == null) {
             FileHandling.exit(in, out);
