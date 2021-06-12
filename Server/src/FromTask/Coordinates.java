@@ -11,9 +11,14 @@ public class Coordinates implements Serializable {
     private Integer x; //Максимальное значение поля: 574, Поле не может быть null
     private Float y; //Поле не может быть null
 
-    public Coordinates() {
-
+    public Coordinates(Integer x, Float y) {
+        this.x = x;
+        this.y = y;
     }
+
+    public Coordinates() {
+    }
+
 
     public void setCoordx(Integer x) {
         this.x = x;
@@ -28,6 +33,7 @@ public class Coordinates implements Serializable {
     }
 
     public float getCoordy() {
+        y.toString().replace(",",".");
         return this.y;
     }
 }

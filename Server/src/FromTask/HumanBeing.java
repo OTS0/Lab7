@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 import Server.*;
+import javafx.scene.Scene;
 
 public class HumanBeing implements Serializable {
     private Integer id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
@@ -21,6 +22,34 @@ public class HumanBeing implements Serializable {
     private WeaponType weaponType; //Поле может быть null
     private Mood mood; //Поле может быть null
     private Car car; //Поле может быть null
+    private String login ;
+
+    @Override
+    public String toString() {
+        return "HumanBeing{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", X=" + getCoordinates().getCoordx() +
+                ", Y=" + getCoordinates().getCoordy() +
+                ", creationDate=" + creationDate +
+                ", realHero=" + realHero +
+                ", hasToothpick=" + hasToothpick +
+                ", impactSpeed=" + impactSpeed +
+                ", soundtrackName='" + soundtrackName + '\'' +
+                ", weaponType=" + weaponType +
+                ", mood=" + mood +
+                ", carName=" + car.getName() +
+                ", carCool=" + car.getCool() +
+                ", login='" + login + '\'' +
+                '}';
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+public String getLogin() {
+    return login;
+}
 
 
     public HumanBeing(){
@@ -30,10 +59,36 @@ public class HumanBeing implements Serializable {
         LocalDateTime creationDate = LocalDateTime.now();
         this.creationDate = creationDate;
     }
-
     Car Car = new Car();
     Coordinates coord = new Coordinates();
 
+    public HumanBeing( String name, Coordinates coordinates, boolean realHero, Boolean hasToothpick, int impactSpeed, String soundtrackName, WeaponType weaponType, Mood mood, Car car, String login) {
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = LocalDateTime.now();
+        this.realHero = realHero;
+        this.hasToothpick = hasToothpick;
+        this.impactSpeed = impactSpeed;
+        this.soundtrackName = soundtrackName;
+        this.weaponType = weaponType;
+        this.mood = mood;
+        this.car = car;
+        this.login = login;
+    }
+    public HumanBeing( Integer id,String name, Coordinates coordinates, LocalDateTime creationDate, boolean realHero, Boolean hasToothpick, int impactSpeed, String soundtrackName, WeaponType weaponType, Mood mood, Car car, String login) {
+        this.id=id;
+        this.name = name;
+        this.coordinates = coordinates;
+        this.creationDate = creationDate;
+        this.realHero = realHero;
+        this.hasToothpick = hasToothpick;
+        this.impactSpeed = impactSpeed;
+        this.soundtrackName = soundtrackName;
+        this.weaponType = weaponType;
+        this.mood = mood;
+        this.car = car;
+        this.login = login;
+    }
     /**
      *
      * @param obj1 - сравниваемая строка
@@ -530,5 +585,6 @@ public class HumanBeing implements Serializable {
     public void setCarCool(boolean var){
         this.car.setCool(var);
     }
+
 }
 

@@ -13,6 +13,12 @@ public class Car implements Serializable {
     /** Является ли машина крутой */
     private Boolean cool; //Поле может быть null
 
+    public Car(){}
+    public Car(String name, Boolean cool) {
+        this.name = name;
+        this.cool = cool;
+    }
+
     /**
      * @param name - уже проверенная в классе HumanBeing строка, будущее значение поля name
      */
