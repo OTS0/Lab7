@@ -1,8 +1,10 @@
 package Server;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.nio.channels.Channels;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import FromTask.*;
@@ -14,51 +16,94 @@ import Client.*;
  * Класс, запускающий обработку команд пользователя и несколько автоматических протоколов работы с коллекцией
  */
 public class App extends Object {
-    LinkedList<HumanBeing> collection;
+    private static LinkedList<HumanBeing> collection= new LinkedList<>();
+    private boolean exit = false;
     /** Поле введенная команда (изначально пуста) */
     String str = "";
     /** Поле время создания коллекции = время запуска приложения  */
     static String time;
+    Answer answer = null;
+    Request request = null;
 
-    /**
-     * Конструктор, пустой, как вы заметили
-     */
-    public App() {
+    public App(){
+
+    }
+
+    public boolean getExit() {
+        return this.exit;
+    }
+    public Request getRequest(){
+        return this.request;
+    }
+    public Answer getAnswer(){
+        return this.answer;
     }
 
 
-    /**
-     * @param collection - коллекция объектов HumanBeing
-     * @return переменную окружения
-     */
-    public static String readFile(LinkedList<HumanBeing> collection){
-        String path;
-        path = System.getenv("LABA6");
-        Command.read(collection, path);
-        return path;
+    public Request read(SocketChannel channel, ObjectInputStream in){
+        try {
+            if (!channel.isOpen()){
+                exit = true;
+                return null;
+            } else {
+                try {
+                    try {
+                        request = (Request) in.readObject();
+                    } catch (IOException i){
+                        exit = true;
+                    }
+                    if (request != null) {
+                        if (equals(request.getCommand(), "exit")) {
+                            channel.close();
+                        }
+                    }
+                    return request;
+                }catch(EOFException | StreamCorruptedException ignored){
+                    System.out.println("Read problem");
+                    return null;
+                }
+            }
+        } catch(IOException | ClassNotFoundException i){
+            System.out.println("Соединение с пользователем прервано");
+            return null;
+        }
     }
+    public Answer write(SocketChannel channel, ObjectOutputStream out){
+        try {
+            if (out == null || !channel.isOpen()){
+                exit = true;
+                return null;
+            } else {
+                System.out.println("Отправляем: " + answer.getAnswer());
+                if (channel.isOpen()) {
+                    out.writeObject(answer);
+                    return answer;
+                }else {
+                    return null;
+                }
+            }
+        } catch(IOException i){
+            i.printStackTrace();
+            return null;
+        }
 
+    }
     /**
      * Метод, создающий коллекцию, сортирующий ее, запускающий цикл обработки команд пользователя
      */
-    public void start(ObjectInputStream in, ObjectOutputStream out) throws IOException, ClassNotFoundException, IdException, NullException, IndexNotFoundException {
+    public void start() throws IdException, NullException {
         boolean check = false;
-        LinkedList<HumanBeing> collect= new LinkedList<>();
-        this.collection = collect;
         Comparator3000 comparator = new Comparator3000();
         collection.sort(comparator);
         //определяем дату
         Date creation = new Date();
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("E dd.MM.yyyy hh:mm:ss a");
         time = formatForDateNow.format(creation);
-
-        Request request;
-        do {
-            request = (Request)in.readObject();
-            Answer answer = commands(collection, request);
-            out.writeObject(answer);
-        } while (!looseEquals(request.getCommand(), "exit"));
+        if  (!looseEquals(request.getCommand(), "exit")){
+            answer = commands(collection, request);
+        }
     }
+
     /**
      * Класс, реализующий обработку введенных команд и вызывающий соответствующие методы
      * @param collection - коллекция HumanBeing
@@ -66,9 +111,9 @@ public class App extends Object {
      * @throws IdException - add, executeScript могут выбросить исключение
      * @throws NoSuchElementException
      */
-    public static Answer commands(LinkedList<HumanBeing> collection, Request request) throws IdException, NoSuchElementException, NullException, IndexNotFoundException {
+    public static Answer commands(LinkedList<HumanBeing> collection, Request request) throws IdException, NoSuchElementException, NullException {
         String command = request.getCommand();
-        System.out.println(request.getCommand());
+        System.out.println("Запускаем работу для комманды " + command);
         Answer answer = new Answer(request);
         if (Command.equalsPart(command, "help")) {
             answer.setAnswer(Command.help());
@@ -130,6 +175,8 @@ public class App extends Object {
             answer.setAnswer(bad);
         }
     }
+
+
 }
 
 
