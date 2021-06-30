@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: Main
-Class-Path: /home/s312632/SecondSemester/postgresql-42.2.21.jar
